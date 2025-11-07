@@ -3,4 +3,67 @@
   tasks:
     - name: Hello Message
       debug:
-        msg: "Hello World!"
+        msg: "{
+    "HEALTHCHECK": "NOK",
+    "DIAGNÓSTICO": [
+      {
+        "SERVIDOR": {
+          "HOST": "cadop-mqcrpw004.crefisa.com.br",
+          "ESTADO": "UP",
+          "UPTIME": "46 dias",
+          "CPU": "NORMAL < 90% (42%)",
+          "MEMÓRIA": "NORMAL < 90% (32.22%)",
+          "DISCO": [
+            "- C:: OK (44% Livre)",
+            "- D:: OK (86% Livre)"
+          ]
+        }
+      },
+      {
+        "IBMMQ": {
+          "SERVIÇO": "IBM MQ",
+          "QM": "QM.SPI2",
+          "STATUS": "UP",
+          "CANAIS": [
+            "CANAIS ATIVOS: 95 / 96 | HEALTH: Mais de 80% estão RUNNING - porém não todos, verificar"
+          ],
+          "CONEXOES": "OK - Há 532 conexões ativas no QM — dentro do limite saudável.",
+          "QUEUES": [
+            "QUEUE: SYSTEM.ADMIN.STATISTICS.QUEUE | CURDEPTH: 3000 | STATUS: ALTA"
+          ],
+          "QUEUES_ERRORS": [
+            "QUEUE: SPI.OUTPUT.ENVIOLEGADO.ERR | CURDEPTH: 97092 | STATUS: PROBLEMA (ERROR)"
+          ],
+          "DLQs": [
+            "QUEUE: SPI.INPUT.RETORNOAPI.DEADLETTER | CURDEPTH: 4 | STATUS: PROBLEMA (DLQ)",
+            "QUEUE: SPI.INPUT.RETORNOAPI.RSP.DEADLETTER | CURDEPTH: 6 | STATUS: PROBLEMA (DLQ)",
+            "QUEUE: SPI.OUTPUT.ENVIO.SEC.LEGADO.DEADLETTER | CURDEPTH: 7967 | STATUS: PROBLEMA (DLQ)",
+            "QUEUE: SPI.OUTPUT.ENVIOLEGADO.DEADLETTER | CURDEPTH: 4 | STATUS: PROBLEMA (DLQ)"
+          ],
+          "LOG": [
+            "----- amqkstsa.c : 1270 -------------------------------------------------------",
+            "10/30/2025 14:48:25 - Process(5332.7) User(usr_mqm_bcocref_prd) Program(amqzlaa0.exe)",
+            "AMQ7316E: Failed to put message to statistics queue. Reason(2053)",
+            "This error message will be written only once for attempts to put a message to",
+            "----- amqkstsa.c : 1270 -------------------------------------------------------",
+            "10/30/2025 15:18:25 - Process(5332.7) User(usr_mqm_bcocref_prd) Program(amqzlaa0.exe)",
+            "AMQ7316E: Failed to put message to statistics queue. Reason(2053)",
+            "This error message will be written only once for attempts to put a message to",
+            "----- amqkstsa.c : 1270 -------------------------------------------------------",
+            "10/30/2025 15:48:25 - Process(5332.7) User(usr_mqm_bcocref_prd) Program(amqzlaa0.exe)",
+            "AMQ7316E: Failed to put message to statistics queue. Reason(2053)",
+            "This error message will be written only once for attempts to put a message to",
+            "----- amqkstsa.c : 1270 -------------------------------------------------------",
+            "10/30/2025 16:18:25 - Process(5332.7) User(usr_mqm_bcocref_prd) Program(amqzlaa0.exe)",
+            "AMQ7316E: Failed to put message to statistics queue. Reason(2053)",
+            "This error message will be written only once for attempts to put a message to",
+            "----- amqkstsa.c : 1270 -------------------------------------------------------",
+            "10/30/2025 16:48:25 - Process(5332.7) User(usr_mqm_bcocref_prd) Program(amqzlaa0.exe)",
+            "AMQ7316E: Failed to put message to statistics queue. Reason(2053)",
+            "This error message will be written only once for attempts to put a message to",
+            "----- amqkstsa.c : 1270 -------------------------------------------------------"
+          ]
+        }
+      }
+    ]
+  }"
