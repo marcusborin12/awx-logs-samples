@@ -3,7 +3,7 @@
   tasks:
     - name: IIS
       debug:
-        msg: 
+        msg:
           {
             "HEALTHCHECK": "OK",
             "DIAGNÓSTICO": [
@@ -19,7 +19,6 @@
                     "- D:: OK (86% Livre)"
                   ]
                 }
-              }
               }
             ]
           }
