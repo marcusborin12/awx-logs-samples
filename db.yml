@@ -1,9 +1,9 @@
-- name: IIS
+- name: DB
   hosts: all
   tasks:
-    - name: IIS
+    - name: DB
       debug:
-        msg: 
+        msg:
           {
             "HEALTHCHECK": "OK",
             "DIAGNÓSTICO": [
@@ -19,7 +19,6 @@
                     "- D:: OK (86% Livre)"
                   ]
                 }
-              }
               }
             ]
           }
