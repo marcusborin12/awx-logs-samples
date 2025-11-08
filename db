@@ -1,0 +1,25 @@
+- name: IIS
+  hosts: all
+  tasks:
+    - name: IIS
+      debug:
+        msg: 
+          {
+            "HEALTHCHECK": "OK",
+            "DIAGNÓSTICO": [
+              {
+                "SERVIDOR": {
+                  "HOST": "cadop-mqcrpw004.crefisa.com.br",
+                  "ESTADO": "UP",
+                  "UPTIME": "46 dias",
+                  "CPU": "NORMAL < 90% (42%)",
+                  "MEMÓRIA": "NORMAL < 90% (32.22%)",
+                  "DISCO": [
+                    "- C:: OK (44% Livre)",
+                    "- D:: OK (86% Livre)"
+                  ]
+                }
+              }
+              }
+            ]
+          }
