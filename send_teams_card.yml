@@ -1,0 +1,26 @@
+---
+- name: Enviar Adaptive Card de Healthcheck para Microsoft Teams
+  hosts: localhost
+  gather_facts: true
+  vars:
+    webhook_url: "https://adobeservicos.webhook.office.com/webhookb2/c7ff9ce7-9e11-4a3e-88c1-8ec77e0bf601@27293d6d-b75b-4153-bb19-e7054fc9411f/IncomingWebhook/b65aa2f00829447289bc2b8e84da8d47/e9ad6d44-15f7-4d07-b0b5-9a158408043b/V2jN0mnJp5_kQsGCmmj4jNziKYWMecPPo7c6JjjepU4v81"
+
+  tasks:
+    - name: Renderizar o modelo do Adaptive Card
+      template:
+        src: templates/adaptive_card_healthcheck.json.j2
+        dest: /tmp/adaptive_card_healthcheck.json
+
+    - name: Enviar Adaptive Card ao Teams
+      uri:
+        url: "{{ webhook_url }}"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body_format: json
+        body: "{{ lookup('file', '/tmp/adaptive_card_healthcheck.json') | from_json }}"
+      register: response
+
+    - name: Exibir resposta do Teams
+      debug:
+        var: response
