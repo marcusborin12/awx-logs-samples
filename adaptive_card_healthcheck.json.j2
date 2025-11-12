@@ -1,0 +1,45 @@
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "contentUrl": null,
+      "content": {
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+          {
+            "type": "TextBlock",
+            "text": "🔍 Healthcheck Report - {{ job_template_name | default('AWX Job') }}",
+            "weight": "Bolder",
+            "size": "Large"
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              { "title": "Servidor:", "value": "{{ inventory_hostname }}" },
+              { "title": "Serviço:", "value": "{{ service_name | default('N/A') }}" },
+              { "title": "Status:", "value": "{{ health_status }}" },
+              { "title": "Uptime:", "value": "{{ uptime | default('N/A') }}" },
+              { "title": "Data/Hora:", "value": "{{ ansible_date_time.iso8601 }}" }
+            ]
+          },
+          {
+            "type": "TextBlock",
+            "text": "{{ details | default('Sem detalhes adicionais.') }}",
+            "wrap": true,
+            "spacing": "Medium"
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Ver Logs no AWX",
+            "url": "{{ tower_url }}/#/jobs/playbook/{{ job_id }}"
+          }
+        ]
+      }
+    }
+  ]
+}
