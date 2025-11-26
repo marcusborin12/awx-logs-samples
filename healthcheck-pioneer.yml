@@ -91,11 +91,29 @@
         open_problems: "{{ problems_response.json }}"
 
     #################################################################
-    # 5) JSON FINAL
+    # 5) CALCULAR HEALTHCHECK OK/NOK
+    #################################################################
+    - name: Definir status do Healthcheck
+      set_fact:
+        healthcheck_status: >-
+          {% if open_problems.totalCount|default(0) > 0 %}
+            NOK
+          {% elif (infra_health.items|default([]) | length == 0) 
+                 or (app_health.items|default([]) | length == 0) 
+                 or (service_health.items|default([]) | length == 0)
+          %}
+            NOK
+          {% else %}
+            OK
+          {% endif %}
+
+    #################################################################
+    # 6) JSON FINAL
     #################################################################
     - name: Construir JSON final do Health Check
       set_fact:
         health_summary:
+          HEALTHCHECK: "{{ healthcheck_status }}"
           infra: "{{ infra_health }}"
           applications: "{{ app_health }}"
           services: "{{ service_health }}"
