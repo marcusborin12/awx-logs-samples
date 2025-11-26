@@ -1,12 +1,13 @@
 - name: DB
   hosts: all
   tasks:
-    - name: DB
+    - name: Registrar healthcheck via set_stats
       set_stats:
         data:
           HEALTHCHECK:
-            - title: "DB"
-              value: "OK"    
+            - title: "IBM MQ"
+              value: "OK"  
+    - name: DB
       debug:
         msg:
           {
