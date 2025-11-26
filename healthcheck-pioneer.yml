@@ -117,10 +117,10 @@
             "HEALTHCHECK": "{{ healthcheck_status }}",
             "DIAGNOSTICO": [
               {
-                "INFRA": {{ infra_health | to_json }},
-                "APPLICATIONS": {{ app_health | to_json }},
-                "SERVICES": {{ service_health | to_json }},
-                "PROBLEMS": {{ open_problems | to_json }}
+                "INFRA": {{ infra_health }},
+                "APPLICATIONS": {{ app_health }},
+                "SERVICES": {{ service_health }},
+                "PROBLEMS": {{ open_problems }}
               }
             ]
           }
