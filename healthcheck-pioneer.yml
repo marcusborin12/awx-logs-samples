@@ -4,10 +4,9 @@
   gather_facts: no
 
   vars:
-    dynatrace_url: "{{DT_TENANT_URL}}"   # Ex: https://abc123.live.dynatrace.com
-    dynatrace_token: "{{DT_API_TOKEN}}" # Token com scope: metrics.read, entities.read, problems.read
+    dynatrace_url: "{{ DT_TENANT_URL }}"
+    dynatrace_token: "{{ DT_API_TOKEN }}"
 
-    # IDs ou tags do tenant a verificar
     infra_tag: "INFRA"
     app_tag: "APP"
     service_tag: "SERVICE"
@@ -24,60 +23,54 @@
     #################################################################
     - name: Consultar Infraestrutura com tag
       uri:
-        url: "{{ dynatrace_url }}/api/v2/entities"
+        url: "{{ dynatrace_url }}/api/v2/entities?entitySelector=type(HOST),tag({{ infra_tag }})"
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
         return_content: yes
         status_code: 200
         validate_certs: yes
-        params:
-          entitySelector: "type(HOST),tag({{ infra_tag }})"
       register: infra_response
 
     - name: Processar saúde dos hosts
       set_fact:
-        infra_health: "{{ (infra_response.json.items | map(attribute='healthState') | list) }}"
+        infra_health: "{{ (infra_response.json.items | default([]) | map(attribute='healthState') | list) }}"
 
     #################################################################
     # 2) HEALTH APPLICATION
     #################################################################
     - name: Consultar Aplicações com tag
       uri:
-        url: "{{ dynatrace_url }}/api/v2/entities"
+        url: "{{ dynatrace_url }}/api/v2/entities?entitySelector=type(APPLICATION),tag({{ app_tag }})"
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
         return_content: yes
         status_code: 200
         validate_certs: yes
-        params:
-          entitySelector: "type(APPLICATION),tag({{ app_tag }})"
       register: app_response
 
     - name: Processar saúde das aplicações
       set_fact:
-        app_health: "{{ (app_response.json.items | map(attribute='healthState') | list) }}"
+        app_health: "{{ (app_response.json.items | default([]) | map(attribute='healthState') | list) }}"
 
     #################################################################
     # 3) HEALTH SERVICES
     #################################################################
     - name: Consultar Serviços com tag
       uri:
-        url: "{{ dynatrace_url }}/api/v2/entities"
+        url: "{{ dynatrace_url }}/api/v2/entities?entitySelector=type(SERVICE),tag({{ service_tag }})"
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
         return_content: yes
         status_code: 200
         validate_certs: yes
-        params:
-          entitySelector: "type(SERVICE),tag({{ service_tag }})"
       register: service_response
 
     - name: Processar saúde dos serviços
       set_fact:
-        service_health: "{{ (service_response.json.items | map(attribute='healthState') | list) }}"
+        service_health: "{{ (service_response.json.items | default([]) | map(attribute='healthState') | list) }}"
 
     #################################################################
     # 4) CHECAR PROBLEMAS ABERTOS
@@ -95,7 +88,7 @@
 
     - name: Processar problemas abertos
       set_fact:
-        open_problems: "{{ problems_response.json.totalCount }}"
+        open_problems: "{{ problems_response.json.totalCount | default(0) }}"
 
     #################################################################
     # 5) SUMMARY FINAL
