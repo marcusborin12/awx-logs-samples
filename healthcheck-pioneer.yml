@@ -11,10 +11,9 @@
   tasks:
 
     - name: Validar tenant e token
-    - fail:
+      fail:
         msg: "Erro: DT_TENANT_URL ou DT_API_TOKEN não configurados."
-      when: dt_tenant_url is undefined or dt_tenant_url == "" or
-            dt_api_token is undefined or dt_api_token == ""
+      when: dt_tenant_url | length == 0 or dt_api_token | length == 0
 
     - name: Buscar hosts no Dynatrace (v2/entities)
       uri:
@@ -46,7 +45,7 @@
       register: detalhes_host
       failed_when: false
 
-    - name: Montar saída no formato estruturado
+    - name: Montar saída estruturada
       set_fact:
         health_output: >-
           {{
@@ -54,13 +53,19 @@
               lambda h: {
                 "entityId": h.entityId,
                 "displayName": h.displayName,
-                "health": "OK" if (detalhes_host.results | selectattr('item.entityId', 'equalto', h.entityId) | list)[0].json.properties.availabilityState == "AVAILABLE"
-                else "PROBLEM"
+                "health": (
+                  (
+                    detalhes_host.results
+                    | selectattr('item.entityId', 'equalto', h.entityId)
+                    | map(attribute='json.properties.availabilityState')
+                    | first
+                  ) == "AVAILABLE"
+                ) | ternary("OK", "PROBLEM")
               }
             ) | list
           }}
 
-    - name: Exibir Healthcheck Final
+    - name: Exibir resultado final
       debug:
         msg:
           hosts: "{{ health_output }}"
