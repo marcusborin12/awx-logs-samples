@@ -1,25 +1,37 @@
----
-- name: Healthcheck – coleta e envia dynamic_facts
+- name: Montar Card e Enviar ao Teams
   hosts: localhost
   gather_facts: yes
 
+  vars:
+    webhook_url: "SUA_WEBHOOK_URL"
+
   tasks:
 
-    - name: Gerar dynamic_facts para o workflow
-      set_stats:
-        data:
-          dynamic_facts:
-            - title: "Servidor"
-              value: "{{ inventory_hostname }}"
+    - name: Garantir que HEALTHCHECK existe
+      set_fact:
+        HEALTHCHECK: "{{ HEALTHCHECK | default([]) }}"
 
-            - title: "Status"
-              value: "OK"
+    - name: Exibir tudo que veio dos playbooks anteriores
+      debug:
+        var: HEALTHCHECK
 
-            - title: "CPU"
-              value: "37%"
+    - name: Montar dynamic_facts unificado de forma genérica
+      set_fact:
+        dynamic_facts: >
+          {{
+            HEALTHCHECK | map('combine', {'title': item.title, 'value': item.value}) | list
+          }}
 
-            - title: "Memória"
-              value: "4.1 GB / 8 GB"
+    - name: Renderizar o modelo do Adaptive Card
+      template:
+        src: templates/adaptive_card.json.j2
+        dest: /tmp/card.json
 
-            - title: "Data"
-              value: "{{ ansible_date_time.iso8601 }}"
+    - name: Enviar ao Teams
+      uri:
+        url: "{{ webhook_url }}"
+        method: POST
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        body: "{{ lookup('file', '/tmp/card.json') | from_json }}"
