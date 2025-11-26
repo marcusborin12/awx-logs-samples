@@ -2,10 +2,14 @@
   hosts: all
   tasks:
     - name: IBM MQ
+      set_stats:
+        data:
+          HEALTHCHECK:
+            - title: "IBM MQ"
+              value: "NOK"    
       debug:
         msg: 
           {
-            "HEALTHCHECK": "NOK",
             "DIAGNÓSTICO": [
               {
                 "SERVIDOR": {
