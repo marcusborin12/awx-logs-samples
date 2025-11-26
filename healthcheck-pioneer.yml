@@ -110,14 +110,20 @@
     #################################################################
     # 6) JSON FINAL
     #################################################################
-    - name: Construir JSON final do Health Check
-      set_fact:
-        health_summary:
-          HEALTHCHECK: "{{ healthcheck_status }}"
-          infra: "{{ infra_health }}"
-          applications: "{{ app_health }}"
-          services: "{{ service_health }}"
-          problems: "{{ open_problems }}"
+    - name: Health Check Pioneer
+      debug:
+        msg:
+          {
+            "HEALTHCHECK": "{{ healthcheck_status }}",
+            "DIAGNOSTICO": [
+              {
+                "INFRA": {{ infra_health | to_json }},
+                "APPLICATIONS": {{ app_health | to_json }},
+                "SERVICES": {{ service_health | to_json }},
+                "PROBLEMS": {{ open_problems | to_json }}
+              }
+            ]
+          }
 
     - name: Exibir JSON Final
       debug:
