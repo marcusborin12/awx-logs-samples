@@ -1,13 +1,14 @@
 - name: IBM MQ Sample
   hosts: all
   tasks:
-    - name: IBM MQ
+    - name: Registrar healthcheck via set_stats
       set_stats:
         data:
           HEALTHCHECK:
             - title: "IBM MQ"
               value: "NOK"    
-      debug:
+    - name: Registrar healthcheck via set_stats              
+      debug: IBM MQ
         msg: 
           {
             "DIAGNÓSTICO": [
