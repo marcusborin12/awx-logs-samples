@@ -5,7 +5,7 @@
       set_stats:
         data:
           HEALTHCHECK:
-            - title: "IBM MQ"
+            - title: "DB"
               value: "OK"  
     - name: DB
       debug:
