@@ -107,20 +107,23 @@
           {% endif %}
 
     #################################################################
-    # 6) JSON FINAL CORRETO (SEM JINJA SOLTO)
+    # 6) JSON FINAL CORRETO (SEM ERRO JINJA)
     #################################################################
     - name: Construir JSON final
       set_fact:
-        health_summary: >-
-          {{
+        health_summary: "{{ {
+          'HEALTHCHECK': healthcheck_status,
+          'DIAGNOSTICO': [
             {
-              "HEALTHCHECK": healthcheck_status,
-              "DIAGNOSTICO": [
-                {
-                  "INFRA": infra_health,
-                  "APPLICATIONS": app_health,
-                  "SERVICES": service_health,
-                  "PROBLEMS": open_problems
-                }
-              ]
-            } | to_json
+              'INFRA': infra_health,
+              'APPLICATIONS': app_health,
+              'SERVICES': service_health,
+              'PROBLEMS': open_problems
+            }
+          ]
+        } | to_json }}"
+
+    - name: Exibir JSON Final
+      debug:
+        var: health_summary
+
