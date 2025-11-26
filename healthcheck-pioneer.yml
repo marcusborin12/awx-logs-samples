@@ -4,8 +4,8 @@
   gather_facts: no
 
   vars:
-    dynatrace_url: "{{ DT_TENANT_URL | default('') }}"
-    dynatrace_token: "{{ DT_API_TOKEN | default('') }}"
+    dynatrace_url: "{{ DT_TENANT_URL | regex_replace('apps', 'live') }}"
+    dynatrace_token: "{{ DT_API_TOKEN }}"
 
     tag_infra: "INFRA"
     tag_app: "APP"
@@ -19,30 +19,40 @@
     - name: Validar tenant e token
       fail:
         msg: "Erro: DT_TENANT_URL ou DT_API_TOKEN não configurados."
-      when: dynatrace_url | length == 0 or dynatrace_token | length == 0
+      when: dynatrace_url == "" or dynatrace_token == ""
 
 
     #################################################################
-    # 2 - BUSCAR HOSTS (INFRA)
+    # 2 - BUSCAR HOSTS
     #################################################################
     - name: Buscar Hosts no Dynatrace
       uri:
-        url: "{{ dynatrace_url }}/api/v2/entities?entitySelector=type(HOST),tag({{ tag_infra }})"
+        url: "{{ dynatrace_url }}/api/v2/entities"
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
         return_content: yes
-        validate_certs: no
+        validate_certs: yes
+        status_code: 200
+        url_username: ""
+        url_password: ""
+        # Query params devem ir no URL
+        url: "{{ dynatrace_url }}/api/v2/entities?entitySelector=type(HOST),tag({{ tag_infra }})"
       register: hosts_response
+      failed_when: false
 
     - name: Processar health dos hosts
       set_fact:
-        hosts_list: "{{ hosts_response.json.items |
-                        map('extract', ['entityId','displayName','healthState']) | list }}"
+        hosts_list: >-
+          {{
+            (hosts_response.json.items | default([]))
+            | map('extract', ['entityId','displayName','healthState'])
+            | list
+          }}
 
 
     #################################################################
-    # 3 - BUSCAR APLICAÇÕES
+    # 3 - BUSCAR APPS
     #################################################################
     - name: Buscar Aplicações no Dynatrace
       uri:
@@ -51,36 +61,48 @@
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
         return_content: yes
-        validate_certs: no
+        validate_certs: yes
+        status_code: 200
       register: apps_response
+      failed_when: false
 
-    - name: Processar health das aplicações
+    - name: Processar health das apps
       set_fact:
-        apps_list: "{{ apps_response.json.items |
-                       map('extract', ['entityId','displayName','healthState']) | list }}"
+        apps_list: >-
+          {{
+            (apps_response.json.items | default([]))
+            | map('extract', ['entityId','displayName','healthState'])
+            | list
+          }}
 
 
     #################################################################
-    # 4 - BUSCAR SERVIÇOS
+    # 4 - BUSCAR SERVICES
     #################################################################
-    - name: Buscar Services
+    - name: Buscar Services no Dynatrace
       uri:
         url: "{{ dynatrace_url }}/api/v2/entities?entitySelector=type(SERVICE),tag({{ tag_service }})"
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
         return_content: yes
-        validate_certs: no
+        validate_certs: yes
+        status_code: 200
       register: services_response
+      failed_when: false
 
-    - name: Processar health dos serviços
+    - name: Processar health dos services
       set_fact:
-        services_list: "{{ services_response.json.items |
-                           map('extract', ['entityId','displayName','healthState']) | list }}"
+        services_list: >-
+          {{
+            (services_response.json.items | default([]))
+            | map('extract', ['entityId','displayName','healthState'])
+            | list
+          }}
 
 
     #################################################################
-    # 5 - CHECAR PROBLEMAS ABERTOS
+    # 5 - BUSCAR PROBLEMAS
     #################################################################
     - name: Buscar problemas abertos
       uri:
@@ -89,8 +111,10 @@
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
         return_content: yes
-        validate_certs: no
+        validate_certs: yes
+        status_code: 200
       register: problems_response
+      failed_when: false
 
     - name: Processar contagem de problemas
       set_fact:
@@ -98,45 +122,47 @@
 
 
     #################################################################
-    # 6 - DETERMINAR STATUS FINAL
+    # 6 - STATUS FINAL
     #################################################################
-    - name: Determinar resultado geral do healthcheck
+    - name: Determinar resultado geral
       set_fact:
         healthcheck_status: >-
           {%
-            if (hosts_list | selectattr('healthState','!=','HEALTHY') | list | length) > 0
-            or (apps_list | selectattr('healthState','!=','HEALTHY') | list | length) > 0
-            or (services_list | selectattr('healthState','!=','HEALTHY') | list | length) > 0
+            if (hosts_list | selectattr('2','!=','HEALTHY') | list | length) > 0
+            or (apps_list | selectattr('2','!=','HEALTHY') | list | length) > 0
+            or (services_list | selectattr('2','!=','HEALTHY') | list | length) > 0
             or problems_count | int > 0
-          %} NOK
-          {% else %} OK
+          %}
+          NOK
+          {% else %}
+          OK
           {% endif %}
 
 
     #################################################################
-    # 7 - OUTPUT FINAL FORMATADO
+    # 7 - MONTAR OUTPUT NO MODELO ORIGINAL
     #################################################################
     - name: Montar estrutura final
       set_fact:
         health_output:
           HEALTHCHECK: "{{ healthcheck_status }}"
           DIAGNÓSTICO:
-            SERVIDORES:
-              TOTAL: "{{ hosts_list | length }}"
-              DETALHES: "{{ hosts_list }}"
-            APLICACOES:
-              TOTAL: "{{ apps_list | length }}"
-              DETALHES: "{{ apps_list }}"
-            SERVICOS:
-              TOTAL: "{{ services_list | length }}"
-              DETALHES: "{{ services_list }}"
-            PROBLEMAS:
-              TOTAL: "{{ problems_count }}"
+            - SERVIDORES:
+                TOTAL: "{{ hosts_list | length }}"
+                DETALHES: "{{ hosts_list }}"
+            - APLICACOES:
+                TOTAL: "{{ apps_list | length }}"
+                DETALHES: "{{ apps_list }}"
+            - SERVICOS:
+                TOTAL: "{{ services_list | length }}"
+                DETALHES: "{{ services_list }}"
+            - PROBLEMAS:
+                TOTAL: "{{ problems_count }}"
 
 
     #################################################################
     # 8 - OUTPUT FINAL
     #################################################################
-    - name: Retornar saída final
+    - name: Retornar saída
       debug:
         msg: "{{ health_output }}"
