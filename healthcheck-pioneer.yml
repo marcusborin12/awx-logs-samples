@@ -27,12 +27,10 @@
     #################################################################
     - name: Buscar Hosts no Dynatrace
       uri:
-        url: "{{ dynatrace_url }}/api/v2/entities"
+        url: "{{ dynatrace_url }}/api/v2/entities?entitySelector=type(HOST),tag({{ tag_infra }})"
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
-        url_parameters:
-          entitySelector: "type(HOST),tag({{ tag_infra }})"
         return_content: yes
         validate_certs: no
       register: hosts_response
@@ -48,12 +46,10 @@
     #################################################################
     - name: Buscar Aplicações no Dynatrace
       uri:
-        url: "{{ dynatrace_url }}/api/v2/entities"
+        url: "{{ dynatrace_url }}/api/v2/entities?entitySelector=type(APPLICATION),tag({{ tag_app }})"
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
-        url_parameters:
-          entitySelector: "type(APPLICATION),tag({{ tag_app }})"
         return_content: yes
         validate_certs: no
       register: apps_response
@@ -65,16 +61,14 @@
 
 
     #################################################################
-    # 4 - BUSCAR SERVICES
+    # 4 - BUSCAR SERVIÇOS
     #################################################################
     - name: Buscar Services
       uri:
-        url: "{{ dynatrace_url }}/api/v2/entities"
+        url: "{{ dynatrace_url }}/api/v2/entities?entitySelector=type(SERVICE),tag({{ tag_service }})"
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
-        url_parameters:
-          entitySelector: "type(SERVICE),tag({{ tag_service }})"
         return_content: yes
         validate_certs: no
       register: services_response
@@ -120,7 +114,7 @@
 
 
     #################################################################
-    # 7 - OUTPUT FINAL MODELO
+    # 7 - OUTPUT FINAL FORMATADO
     #################################################################
     - name: Montar estrutura final
       set_fact:
