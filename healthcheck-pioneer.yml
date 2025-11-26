@@ -4,8 +4,8 @@
   gather_facts: no
 
   vars:
-    dynatrace_url: "{{ lookup('env','DT_TENANT_URL') }}"
-    dynatrace_token: "{{ lookup('env','DT_API_TOKEN') }}"
+    dynatrace_url: "{{ DT_TENANT_URL }}"
+    dynatrace_token: "{{ DT_API_TOKEN }}"
 
     tag_infra: "INFRA"
     tag_app: "APP"
