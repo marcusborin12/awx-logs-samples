@@ -2,6 +2,11 @@
   hosts: all
   tasks:
     - name: DB
+      set_stats:
+        data:
+          HEALTHCHECK:
+            - title: "DB"
+              value: "OK"    
       debug:
         msg:
           {
