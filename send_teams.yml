@@ -25,8 +25,8 @@
 
     - name: Renderizar o modelo do Adaptive Card
       template:
-        src: templates/adaptive_card.json.j2
-        dest: /tmp/card.json
+        src: templates/adaptive_card_healthcheck.json.j2
+        dest: /tmp/adaptive_card_healthcheck.json
 
     - name: Enviar ao Teams
       uri:
