@@ -1,12 +1,13 @@
 - name: IIS
   hosts: all
   tasks:
-    - name: IIS
+    - name: Registrar healthcheck via set_stats
       set_stats:
         data:
           HEALTHCHECK:
             - title: "IIS"
               value: "OK"
+    - name: IIS              
       debug:
         msg:
           {
