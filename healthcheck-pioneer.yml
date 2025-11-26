@@ -32,9 +32,9 @@
         validate_certs: yes
       register: infra_response
 
-    - name: Processar saúde dos hosts
+    - name: Processar saúde dos hosts (JSON completo)
       set_fact:
-        infra_health: "{{ (infra_response.json.items | default([]) | map(attribute='healthState') | list) }}"
+        infra_health: "{{ infra_response.json }}"
 
     #################################################################
     # 2) HEALTH APPLICATION
@@ -50,9 +50,9 @@
         validate_certs: yes
       register: app_response
 
-    - name: Processar saúde das aplicações
+    - name: Processar saúde das aplicações (JSON completo)
       set_fact:
-        app_health: "{{ (app_response.json.items | default([]) | map(attribute='healthState') | list) }}"
+        app_health: "{{ app_response.json }}"
 
     #################################################################
     # 3) HEALTH SERVICES
@@ -68,9 +68,9 @@
         validate_certs: yes
       register: service_response
 
-    - name: Processar saúde dos serviços
+    - name: Processar saúde dos serviços (JSON completo)
       set_fact:
-        service_health: "{{ (service_response.json.items | default([]) | map(attribute='healthState') | list) }}"
+        service_health: "{{ service_response.json }}"
 
     #################################################################
     # 4) CHECAR PROBLEMAS ABERTOS
@@ -88,7 +88,7 @@
 
     - name: Processar problemas abertos
       set_fact:
-        open_problems: "{{ problems_response.json.totalCount | default(0) }}"
+        open_problems: "{{ problems_response.json }}"
 
     #################################################################
     # 5) SUMMARY FINAL
@@ -99,15 +99,16 @@
           🔍 **Health Check Dynatrace**
           ---
           🖥 **Infraestrutura (Hosts com tag {{ infra_tag }})**
-          Statuses: {{ infra_health }}
+          {{ infra_health }}
 
           🌐 **Aplicações (tag {{ app_tag }})**
-          Statuses: {{ app_health }}
+          {{ app_health }}
 
           🔧 **Serviços (tag {{ service_tag }})**
-          Statuses: {{ service_health }}
+          {{ service_health }}
 
-          🚨 **Problemas Abertos:** {{ open_problems }}
+          🚨 **Problemas Abertos (JSON):**
+          {{ open_problems }}
 
     - name: Exibir Summary Final
       debug:
