@@ -2,7 +2,7 @@
   hosts: all
   tasks:
     - name: Registrar healthcheck via set_stats
-      set_stats:
+      set_fact:
         data:
           HEALTHCHECK: 
             - title: "DB"
