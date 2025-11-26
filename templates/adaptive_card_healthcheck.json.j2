@@ -17,13 +17,7 @@
           },
           {
             "type": "FactSet",
-            "facts": [
-              { "title": "Servidor:", "value": "{{ inventory_hostname }}" },
-              { "title": "Serviço:", "value": "{{ service_name | default('N/A') }}" },
-              { "title": "Status:", "value": "{{ health_status }}" },
-              { "title": "Uptime:", "value": "{{ uptime | default('N/A') }}" },
-              { "title": "Data/Hora:", "value": "{{ ansible_date_time.iso8601 }}" }
-            ]
+            "facts": {{ dynamic_facts | to_json }}
           },
           {
             "type": "TextBlock",
@@ -36,7 +30,7 @@
           {
             "type": "Action.OpenUrl",
             "title": "Ver Logs no AWX",
-            "url": "https://ansible.local/#/jobs/playbook/11111}"
+            "url": "https://ansible.local/#/jobs/playbook/{{ job_id | default('1') }}"
           }
         ]
       }
