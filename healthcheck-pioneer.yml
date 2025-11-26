@@ -91,25 +91,16 @@
         open_problems: "{{ problems_response.json }}"
 
     #################################################################
-    # 5) SUMMARY FINAL
+    # 5) JSON FINAL
     #################################################################
-    - name: Gerar Summary do Health Check
+    - name: Construir JSON final do Health Check
       set_fact:
-        health_summary: |
-          🔍 **Health Check Dynatrace**
-          ---
-          🖥 **Infraestrutura (Hosts com tag {{ infra_tag }})**
-          {{ infra_health }}
+        health_summary:
+          infra: "{{ infra_health }}"
+          applications: "{{ app_health }}"
+          services: "{{ service_health }}"
+          problems: "{{ open_problems }}"
 
-          🌐 **Aplicações (tag {{ app_tag }})**
-          {{ app_health }}
-
-          🔧 **Serviços (tag {{ service_tag }})**
-          {{ service_health }}
-
-          🚨 **Problemas Abertos (JSON):**
-          {{ open_problems }}
-
-    - name: Exibir Summary Final
+    - name: Exibir JSON Final
       debug:
-        msg: "{{ health_summary }}"
+        var: health_summary
