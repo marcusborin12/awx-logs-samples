@@ -17,9 +17,10 @@
 
     - name: Montar dynamic_facts unificado de forma genérica
       set_fact:
-        dynamic_facts: >
+        dynamic_facts: >-
           {{
-            HEALTHCHECK | map('combine', {'title': item.title, 'value': item.value}) | list
+            HEALTHCHECK | map('extract', attribute='title') | zip(HEALTHCHECK | map(attribute='value')) | 
+            map('community.general.dict_kv', ['title', 'value']) | list
           }}
 
     - name: Renderizar o modelo do Adaptive Card
