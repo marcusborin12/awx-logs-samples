@@ -35,4 +35,4 @@
         body_format: json
         headers:
           Content-Type: "application/json"
-        body: "{{ lookup('file', '/tmp/card.json') | from_json }}"
+        body: "{{ lookup('file', '/tmp/adaptive_card_healthcheck.json') | from_json }}"
