@@ -4,8 +4,8 @@
   gather_facts: no
 
   vars:
-    dynatrace_url: "{{ DT_TENANT_URL }}"
-    dynatrace_token: "{{ DT_API_TOKEN }}"
+    dynatrace_url: "{{ DT_TENANT_URL | default('') }}"
+    dynatrace_token: "{{ DT_API_TOKEN | default('') }}"
 
     tag_infra: "INFRA"
     tag_app: "APP"
@@ -19,7 +19,7 @@
     - name: Validar tenant e token
       fail:
         msg: "Erro: DT_TENANT_URL ou DT_API_TOKEN não configurados."
-      when: dynatrace_url == "" or dynatrace_token == ""
+      when: dynatrace_url | length == 0 or dynatrace_token | length == 0
 
 
     #################################################################
@@ -31,23 +31,20 @@
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
-        params:
+        url_parameters:
           entitySelector: "type(HOST),tag({{ tag_infra }})"
         return_content: yes
+        validate_certs: no
       register: hosts_response
 
     - name: Processar health dos hosts
       set_fact:
-        hosts_list: >-
-          {{
-            hosts_response.json.items
-            | map('extract', ['entityId','displayName','healthState'])
-            | list
-          }}
+        hosts_list: "{{ hosts_response.json.items |
+                        map('extract', ['entityId','displayName','healthState']) | list }}"
 
 
     #################################################################
-    # 3 - BUSCAR APPS
+    # 3 - BUSCAR APLICAÇÕES
     #################################################################
     - name: Buscar Aplicações no Dynatrace
       uri:
@@ -55,19 +52,16 @@
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
-        params:
+        url_parameters:
           entitySelector: "type(APPLICATION),tag({{ tag_app }})"
         return_content: yes
+        validate_certs: no
       register: apps_response
 
     - name: Processar health das aplicações
       set_fact:
-        apps_list: >-
-          {{
-            apps_response.json.items
-            | map('extract', ['entityId','displayName','healthState'])
-            | list
-          }}
+        apps_list: "{{ apps_response.json.items |
+                       map('extract', ['entityId','displayName','healthState']) | list }}"
 
 
     #################################################################
@@ -79,19 +73,16 @@
         method: GET
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
-        params:
+        url_parameters:
           entitySelector: "type(SERVICE),tag({{ tag_service }})"
         return_content: yes
+        validate_certs: no
       register: services_response
 
     - name: Processar health dos serviços
       set_fact:
-        services_list: >-
-          {{
-            services_response.json.items
-            | map('extract', ['entityId','displayName','healthState'])
-            | list
-          }}
+        services_list: "{{ services_response.json.items |
+                           map('extract', ['entityId','displayName','healthState']) | list }}"
 
 
     #################################################################
@@ -104,15 +95,16 @@
         headers:
           Authorization: "Api-Token {{ dynatrace_token }}"
         return_content: yes
+        validate_certs: no
       register: problems_response
 
     - name: Processar contagem de problemas
       set_fact:
-        problems_count: "{{ problems_response.json.totalCount }}"
+        problems_count: "{{ problems_response.json.totalCount | default(0) }}"
 
 
     #################################################################
-    # 6 - DETERMINAR STATUS FINAL (HEALTHCHECK)
+    # 6 - DETERMINAR STATUS FINAL
     #################################################################
     - name: Determinar resultado geral do healthcheck
       set_fact:
@@ -122,30 +114,31 @@
             or (apps_list | selectattr('healthState','!=','HEALTHY') | list | length) > 0
             or (services_list | selectattr('healthState','!=','HEALTHY') | list | length) > 0
             or problems_count | int > 0
-            %} NOK
-            {% else %} OK
+          %} NOK
+          {% else %} OK
           {% endif %}
 
 
     #################################################################
-    # 7 - MONTAR OUTPUT NO EXATO MODELO QUE VOCÊ MANDOU
+    # 7 - OUTPUT FINAL MODELO
     #################################################################
     - name: Montar estrutura final
       set_fact:
         health_output:
           HEALTHCHECK: "{{ healthcheck_status }}"
           DIAGNÓSTICO:
-            - SERVIDORES:
-                TOTAL: "{{ hosts_list | length }}"
-                DETALHES: "{{ hosts_list }}"
-            - APLICACOES:
-                TOTAL: "{{ apps_list | length }}"
-                DETALHES: "{{ apps_list }}"
-            - SERVICOS:
-                TOTAL: "{{ services_list | length }}"
-                DETALHES: "{{ services_list }}"
-            - PROBLEMAS:
-                TOTAL: "{{ problems_count }}"
+            SERVIDORES:
+              TOTAL: "{{ hosts_list | length }}"
+              DETALHES: "{{ hosts_list }}"
+            APLICACOES:
+              TOTAL: "{{ apps_list | length }}"
+              DETALHES: "{{ apps_list }}"
+            SERVICOS:
+              TOTAL: "{{ services_list | length }}"
+              DETALHES: "{{ services_list }}"
+            PROBLEMAS:
+              TOTAL: "{{ problems_count }}"
+
 
     #################################################################
     # 8 - OUTPUT FINAL
