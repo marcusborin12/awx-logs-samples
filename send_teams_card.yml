@@ -3,7 +3,8 @@
   hosts: localhost
   gather_facts: true
   vars:
-    webhook_url: "https://adobeservicos.webhook.office.com/webhookb2/c7ff9ce7-9e11-4a3e-88c1-8ec77e0bf601@27293d6d-b75b-4153-bb19-e7054fc9411f/IncomingWebhook/b65aa2f00829447289bc2b8e84da8d47/e9ad6d44-15f7-4d07-b0b5-9a158408043b/V2jN0mnJp5_kQsGCmmj4jNziKYWMecPPo7c6JjjepU4v81"
+    #webhook_url: "https://adobeservicos.webhook.office.com/webhookb2/c7ff9ce7-9e11-4a3e-88c1-8ec77e0bf601@27293d6d-b75b-4153-bb19-e7054fc9411f/IncomingWebhook/b65aa2f00829447289bc2b8e84da8d47/e9ad6d44-15f7-4d07-b0b5-9a158408043b/V2jN0mnJp5_kQsGCmmj4jNziKYWMecPPo7c6JjjepU4v81"
+    webhook_url: "https://accenture.webhook.office.com/webhookb2/e1bb6d1a-9f00-47c4-8da4-70c117755d54@e0793d39-0939-496d-b129-198edd916feb/IncomingWebhook/62a4aea3e61e48ae9e3ab63d33550859/5bf8e6bb-735b-45d9-859a-867da2417df4/V2gmyLJD9a-eBR2GFLuzgDPcObfFWIVTPnJGnNLC1ovjk1"
 
   tasks:
     - name: Renderizar o modelo do Adaptive Card
