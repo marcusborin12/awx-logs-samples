@@ -10,7 +10,7 @@
 
     - name: Validar se dynamic_facts foi recebido
       debug:
-        msg: "{{ dynamic_facts }}"
+        msg: "{{ HEALTHCHECK }}"
       when: dynamic_facts is defined
 
     - name: Renderizar o modelo do Adaptive Card
