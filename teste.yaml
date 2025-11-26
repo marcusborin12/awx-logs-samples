@@ -1,17 +1,25 @@
-- set_stats:
-    data:
-      dynamic_facts:
-        - title: "Servidor"
-          value: "awx-node01"
+---
+- name: Healthcheck – coleta e envia dynamic_facts
+  hosts: localhost
+  gather_facts: yes
 
-        - title: "Status"
-          value: "OK"
+  tasks:
 
-        - title: "CPU"
-          value: "37%"
+    - name: Gerar dynamic_facts para o workflow
+      set_stats:
+        data:
+          dynamic_facts:
+            - title: "Servidor"
+              value: "{{ inventory_hostname }}"
 
-        - title: "Memória"
-          value: "4.1 GB / 8 GB"
+            - title: "Status"
+              value: "OK"
 
-        - title: "Data"
-          value: "{{ ansible_date_time.iso8601 }}"
+            - title: "CPU"
+              value: "37%"
+
+            - title: "Memória"
+              value: "4.1 GB / 8 GB"
+
+            - title: "Data"
+              value: "{{ ansible_date_time.iso8601 }}"
