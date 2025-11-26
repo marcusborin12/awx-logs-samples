@@ -1,0 +1,17 @@
+- set_stats:
+    data:
+      dynamic_facts:
+        - title: "Servidor"
+          value: "awx-node01"
+
+        - title: "Status"
+          value: "OK"
+
+        - title: "CPU"
+          value: "37%"
+
+        - title: "Memória"
+          value: "4.1 GB / 8 GB"
+
+        - title: "Data"
+          value: "{{ ansible_date_time.iso8601 }}"
