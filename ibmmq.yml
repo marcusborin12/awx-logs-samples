@@ -7,7 +7,7 @@
           HEALTHCHECK:
             - title: "IBM MQ"
               value: "NOK"    
-    - name: Registrar healthcheck via set_stats              
+    - name: IBM MQ             
       debug: IBM MQ
         msg: 
           {
