@@ -4,9 +4,9 @@
     - name: Registrar healthcheck via set_stats
       set_stats:
         data:
-          HEALTHCHECK:
+          HEALTHCHECK: 
             - title: "DB"
-              value: "OK"  
+              value: "OK" 
     - name: DB
       debug:
         msg:
