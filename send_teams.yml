@@ -2,9 +2,6 @@
   hosts: localhost
   gather_facts: no
 
-  vars:
-    webhook_url: {{ webhook_url_msteams }}
-
   tasks:
         
     - name: Capturar todas as variáveis do workflow
@@ -36,7 +33,7 @@
 
     - name: Enviar ao Teams
       uri:
-        url: "{{ webhook_url }}"
+        url: "{{ webhook_url_msteams }}"
         method: POST
         body_format: json
         headers:
