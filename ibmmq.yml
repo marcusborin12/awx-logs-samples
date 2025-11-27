@@ -4,7 +4,7 @@
   tasks:
 
     - name: Registrar healthcheck via set_stats
-      set_fact:
+      set_stats:
         data:
           HEALTHCHECK:
             - title: "IBM MQ"
