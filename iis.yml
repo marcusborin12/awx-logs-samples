@@ -4,7 +4,7 @@
     - name: Registrar healthcheck via set_stats
       set_stats:
         data:
-          HEALTHCHECK:
+          HEALTHCHECK_IIS:
             - title: "IIS"
               value: "OK"
     - name: IIS              
