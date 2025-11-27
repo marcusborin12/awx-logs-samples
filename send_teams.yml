@@ -8,6 +8,12 @@
       set_fact:
         all_vars: "{{ hostvars['localhost'] | dict2items }}"
 
+    - name: Exibir HEALTHCHECK final
+      debug:
+        msg: | 
+        - Imprimindo all_vars: "{{ all_vars }}"
+        
+
     - name: Filtrar apenas as variáveis de healthcheck
       set_fact:
         healthcheck_lists: >-
@@ -22,9 +28,6 @@
       set_fact:
         HEALTHCHECK: "{{ healthcheck_lists | sum(start=[]) }}"
 
-    - name: Exibir HEALTHCHECK final
-      debug:
-        var: HEALTHCHECK
 
     - name: Renderizar o modelo do Adaptive Card
       template:
