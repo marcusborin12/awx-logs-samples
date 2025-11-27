@@ -10,8 +10,8 @@
 
     - name: Exibir HEALTHCHECK final
       debug:
-        msg: | 
-        - Imprimindo all_vars: "{{ all_vars }}"
+        msg: 
+          Imprimindo all_vars: "{{ all_vars }}"
         
 
     - name: Filtrar apenas as variáveis de healthcheck
