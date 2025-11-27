@@ -25,12 +25,6 @@
               }{% if not loop.last %},{% endif %}
               {% endfor %}
             ]
-          },
-          {
-            "type": "TextBlock",
-            "text": "{{ details | default('Sem detalhes adicionais.') }}",
-            "wrap": true,
-            "spacing": "Medium"
           }
         ],
         "actions": [
