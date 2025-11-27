@@ -17,7 +17,14 @@
           },
           {
             "type": "FactSet",
-            "facts": {{ HEALTHCHECK | to_json }}
+            "facts": [
+              {% for item in HEALTHCHECK %}
+              {
+                "title": "{{ item.title }}",
+                "value": "{% if item.value == 'OK' %}✅{% else %}❌{% endif %}"
+              }{% if not loop.last %},{% endif %}
+              {% endfor %}
+            ]
           },
           {
             "type": "TextBlock",
