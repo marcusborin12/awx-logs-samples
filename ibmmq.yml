@@ -6,7 +6,7 @@
     - name: Registrar healthcheck via set_stats
       set_stats:
         data:
-          HEALTHCHECK:
+          HEALTHCHECK_IBMMQ:
             - title: "IBM MQ"
               value: "NOK"
 
