@@ -37,7 +37,7 @@
           {
             "type": "Action.OpenUrl",
             "title": "Ver Logs no AWX",
-            "url": "https://ansible.local/#/jobs/playbook/{{ job_id | default('1') }}"
+            "url": "https://ansible.local/#/jobs/playbook/{{ awx_job_id | default('1') }}"
           }
         ]
       }
