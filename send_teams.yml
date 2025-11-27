@@ -8,7 +8,7 @@
   tasks:
     - name: Exibir o nome do workflow
       debug:
-        msg: "O nome do workflow é: {{ awx_workflow_job_alias  }}"
+        msg: "O nome do workflow é: {{ awx_workflow_job_name  }}"
         
     - name: Capturar todas as variáveis do workflow
       set_fact:
