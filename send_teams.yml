@@ -1,17 +1,17 @@
 - name: Montar Card e Enviar ao Teams
   hosts: localhost
-  gather_facts: yes
+  gather_facts: no
 
   vars:
-    webhook_url: "https://accenture.webhook.office.com/webhookb2/e1bb6d1a-9f00-47c4-8da4-70c117755d54@e0793d39-0939-496d-b129-198edd916feb/IncomingWebhook/a94a253a2c4841558717eb921d9bf3d5/5bf8e6bb-735b-45d9-859a-867da2417df4/V2MboRW3qA0UjjLu2zRLT7KfIN-Fzl6N469UEEdYFR9NE1"
+    webhook_url: "https://accenture.webhook.office.com/webhookb2/..."
 
- tasks:
+  tasks:
 
     - name: Capturar todas as variáveis do workflow
       set_fact:
         all_vars: "{{ hostvars['localhost'] | dict2items }}"
 
-    - name: Filtrar apenas as healthchecks
+    - name: Filtrar apenas as variáveis de healthcheck
       set_fact:
         healthcheck_lists: >-
           {{
@@ -28,6 +28,7 @@
     - name: Exibir HEALTHCHECK final
       debug:
         var: HEALTHCHECK
+
     - name: Renderizar o modelo do Adaptive Card
       template:
         src: templates/adaptive_card_healthcheck.json.j2
