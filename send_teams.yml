@@ -8,7 +8,7 @@
   tasks:
 
     - name: Garantir que HEALTHCHECK existe
-      set_fact:
+      set_stats:
         HEALTHCHECK: "{{ HEALTHCHECK | default([]) }}"
 
     - name: Exibir tudo que veio dos playbooks anteriores
@@ -16,8 +16,8 @@
         var: HEALTHCHECK
 
     - name: Montar dynamic_facts unificado de forma genérica
-      set_fact:
-        dynamic_facts: >-
+      set_stats:
+        HEALTHCHECK: >-
           {{
             HEALTHCHECK | map('extract', attribute='title') | zip(HEALTHCHECK | map(attribute='value')) | 
             map('community.general.dict_kv', ['title', 'value']) | list
