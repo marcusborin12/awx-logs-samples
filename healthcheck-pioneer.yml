@@ -126,5 +126,6 @@
     - name: Exibir JSON Final
       debug:
         var: health_summary
-        msg: health_summary
+        msg: 
+          health_summary
 
