@@ -1,29 +1,73 @@
-- name: IIS
+- name: IIS Sample
   hosts: all
+  gather_facts: yes
+
   tasks:
+    - name: IIS
+      debug:
+        msg:
+          {
+            "HEALTHCHECK": "OK",
+            "DIAGNÓSTICO": [
+              {
+                "SERVIDOR": {
+                  "HOST": "cadop-iisprw002.crefisa.com.br",
+                  "ESTADO": "UP",
+                  "UPTIME": "58 dias",
+                  "CPU": "NORMAL < 80% (27%)",
+                  "MEMÓRIA": "NORMAL < 80% (48%)",
+                  "DISCO": [
+                    "- C:: OK (38% Livre)",
+                    "- D:: OK (72% Livre)"
+                  ]
+                }
+              },
+              {
+                "IIS": {
+                  "SERVIÇO": "IIS",
+                  "STATUS": "UP",
+                  "APPLICATION_POOLS": [
+                    "DefaultAppPool: RUNNING",
+                    "API.CREDITO.POOL: RUNNING",
+                    "API.CLIENTES.POOL: RUNNING",
+                    "SITE.PORTAL.POOL: RUNNING"
+                  ],
+                  "SITES": [
+                    {
+                      "NOME": "PORTAL-CLIENTE",
+                      "STATUS": "RUNNING",
+                      "RESPONSE_TIME": "28ms",
+                      "BINDINGS": [
+                        "https://portal.crefisa.com.br:443"
+                      ]
+                    },
+                    {
+                      "NOME": "API-CREDITO",
+                      "STATUS": "RUNNING",
+                      "RESPONSE_TIME": "34ms",
+                      "BINDINGS": [
+                        "https://api-credfisa.com.br:443"
+                      ]
+                    }
+                  ],
+                  "CONEXOES": "OK - 128 conexões ativas — dentro do limite saudável.",
+                  "LOG_EVENTOS": [
+                    "Informational — W3SVC: Nenhum erro encontrado nas últimas 24h.",
+                    "Informational — WAS: Todos os application pools reiniciaram corretamente na última manutenção."
+                  ],
+                  "CHECKS_ADICIONAIS": [
+                    "Recycle automático dos pools dentro da janela configurada — OK",
+                    "Health Monitoring do IIS — OK",
+                    "Certificados TLS válidos com mais de 90 dias restantes — OK"
+                  ]
+                }
+              }
+            ]
+          }
+
     - name: Registrar healthcheck via set_stats
       set_stats:
         data:
           HEALTHCHECK_IIS:
             - title: "IIS"
               value: "OK"
-    - name: IIS              
-      debug:
-        msg:
-          {
-            "DIAGNÓSTICO": [
-              {
-                "SERVIDOR": {
-                  "HOST": "cadop-mqcrpw004.crefisa.com.br",
-                  "ESTADO": "UP",
-                  "UPTIME": "46 dias",
-                  "CPU": "NORMAL < 90% (42%)",
-                  "MEMÓRIA": "NORMAL < 90% (32.22%)",
-                  "DISCO": [
-                    "- C:: OK (44% Livre)",
-                    "- D:: OK (86% Livre)"
-                  ]
-                }
-              }
-            ]
-          }
