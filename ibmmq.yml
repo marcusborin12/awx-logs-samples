@@ -13,6 +13,7 @@
     - name: Mostrar diagnóstico detalhado do IBM MQ
       debug:
         msg:
+          Healthcheck: ok
           DIAGNOSTICO:
             - SERVIDOR:
                 HOST: "cadop-mqcrpw004.crefisa.com.br"
