@@ -1,29 +1,64 @@
-- name: DB
+- name: Banco de Dados – Sample com Erros
   hosts: all
+  gather_facts: yes
+
   tasks:
-    - name: Registrar healthcheck via set_stats
-      set_stats:
-        data:
-          HEALTHCHECK_DB: 
-            - title: "DB"
-              value: "OK" 
-    - name: DB
+    - name: Database Check
       debug:
         msg:
           {
+            "HEALTHCHECK": "NOK",
             "DIAGNÓSTICO": [
               {
                 "SERVIDOR": {
-                  "HOST": "cadop-mqcrpw004.crefisa.com.br",
+                  "HOST": "cadop-dbsp001.crefisa.com.br",
                   "ESTADO": "UP",
-                  "UPTIME": "46 dias",
-                  "CPU": "NORMAL < 90% (42%)",
-                  "MEMÓRIA": "NORMAL < 90% (32.22%)",
+                  "UPTIME": "39 dias",
+                  "CPU": "ALTA > 90% (93%)",
+                  "MEMÓRIA": "ALTA > 90% (91%)",
                   "DISCO": [
-                    "- C:: OK (44% Livre)",
-                    "- D:: OK (86% Livre)"
+                    "- /u01: OK (41% Livre)",
+                    "- /data: ALERTA (12% Livre)"
+                  ]
+                }
+              },
+              {
+                "DATABASE": {
+                  "SERVIÇO": "Oracle 19c",
+                  "INSTANCE": "ORCLPRD01",
+                  "STATUS": "DEGRADED",
+                  "CONEXOES": "ALTO - 1921 conexões ativas (limite saudável: 1500)",
+                  "ERROS_CRÍTICOS": [
+                    "ORA-03135: connection lost contact",
+                    "ORA-01555: snapshot too old: rollback segment number with name '' too small",
+                    "ORA-00257: archiver error. Connect AS SYSDBA"
+                  ],
+                  "QUERIES_LENTAS": [
+                    {
+                      "SQL_ID": "6g8ks1tqf9s21",
+                      "TEMPO": "38s",
+                      "TIPO": "SELECT",
+                      "OBJETO": "TB_TRANSACOES",
+                      "STATUS": "LENTO"
+                    }
+                  ],
+                  "TABLESPACES": [
+                    "TABLESPACE USERS: 98% utilizado — CRÍTICO",
+                    "TABLESPACE UNDOTBS1: 89% utilizado — ALERTA"
+                  ],
+                  "LOG": [
+                    "Tue Oct 28 15:33:12 2025 - ORA-00257: archiver error. Connect AS SYSDBA.",
+                    "Tue Oct 28 15:33:33 2025 - WARNING: inbound connection timed out (ORA-3136)",
+                    "Tue Oct 28 15:34:10 2025 - Deadlock detected. See trace file /u01/app/oracle/diag/rdbms/orcl/trace/orcl_deadlock.trc"
                   ]
                 }
               }
             ]
           }
+
+    - name: Registrar healthcheck via set_stats
+      set_stats:
+        data:
+          HEALTHCHECK_DATABASE:
+            - title: "DATABASE"
+              value: "NOK"
