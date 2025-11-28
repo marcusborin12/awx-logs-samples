@@ -127,8 +127,22 @@
       debug:
         var: health_summary
 
-    - name: Exibir health_summary
-      debug:        
-        msg: 
-          health_summary: "{{ health_summary }}"
+    #################################################################
+    # 7) MSG FINAL NO FORMATO HEALTHCHECK + DIAGNOSTICO
+    #################################################################
+    - name: Mensagem final em formato estruturado
+      debug:
+        msg:
+          {
+            "HEALTHCHECK": "{{ healthcheck_status }}",
+            "DIAGNOSTICO": [
+              {
+                "INFRA": {{ infra_health | to_json }},
+                "APPLICATIONS": {{ app_health | to_json }},
+                "SERVICES": {{ service_health | to_json }},
+                "PROBLEMAS_ABERTOS": {{ open_problems | to_json }}
+              }
+            ]
+          }
+
 
