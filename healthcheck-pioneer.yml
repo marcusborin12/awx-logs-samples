@@ -106,6 +106,10 @@
             OK
           {% endif %}
 
+    - name: Normalizar texto do healthcheck_status
+      set_fact:
+        healthcheck_status: "{{ healthcheck_status | trim }}"
+        
     #################################################################
     # 6) JSON FINAL CORRETO (SEM ERRO JINJA)
     #################################################################
