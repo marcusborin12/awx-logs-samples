@@ -126,6 +126,9 @@
     - name: Exibir JSON Final
       debug:
         var: health_summary
+
+    - name: Exibir health_summary
+      debug:        
         msg: 
           health_summary: "{{ health_summary }}"
 
