@@ -1,10 +1,7 @@
 - name: IBM MQ Sample
   hosts: all
   gather_facts: yes
-  tasks:
 
- name: IBM MQ Sample
-  hosts: all
   tasks:
     - name: IBM MQ
       debug:
