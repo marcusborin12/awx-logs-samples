@@ -127,5 +127,5 @@
       debug:
         var: health_summary
         msg: 
-          health_summary: {{ health_summary }}
+          health_summary: "{{ health_summary }}"
 
